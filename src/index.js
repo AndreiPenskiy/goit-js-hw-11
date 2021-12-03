@@ -37,18 +37,21 @@ async function onSearch(e) {
   const hits = await pixApiService.fetchArticles();
   const totalHits = hits.data.totalHits;
 
-  if (totalHits < 1) {
+  if (totalHits < 40) {
+    Notify.info("Вы дошли до конца!");
+    loadMoreBtn.hide();
+  } else if (totalHits < 1) {
         Notify.failure("Нет картинок по такому запросу!");
         return;
-    } else {
+  } else {
         Notify.success(`Мы нашли ${totalHits} изображений!:).`);
-        clearGallery();
-    loadMoreBtn.hide();
+    clearGallery();
+    loadMoreBtn.show();
+  loadMoreBtn.enable();
   }
+
   pixApiService.resetPage();
   pixApiService.fetchArticles().then(appendArticlesMarkup);
-  loadMoreBtn.show();
-  loadMoreBtn.enable()
 
   clearGallery();
 };
@@ -64,10 +67,6 @@ async function loadBtn() {
   const hit = await pixApiService.fetchArticles();
   const hitsLength = hit.data.hits.length;
 
-  if (hitsLength < 40) {
-    Notify.info("Вы дошли до конца!");
-    return loadMoreBtn.hide();
-  }
 }
 
 
@@ -101,7 +100,6 @@ function appendArticlesMarkup(e) {
   }).join("");
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
-  loadMoreBtn.show();
 }
 
 
